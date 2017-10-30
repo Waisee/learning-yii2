@@ -2,7 +2,10 @@
 
 namespace console\controllers;
 
-use Yii;
+use yii\helpers\Console;
+use console\models\News;
+use console\models\Subscriber;
+use console\models\Sender;
 /**
  * Description of newPHPClass
  *
@@ -10,17 +13,17 @@ use Yii;
  */
 class MailerController extends \yii\console\Controller
 {
-
+    /**
+     * Sending newsletter
+     */
     public function actionSend()
     {
-        $result = Yii::$app->mailer->compose()
-                ->setFrom('waisee@bk.ru')
-                ->setTo('waisee7@gmail.com')
-                ->setSubject('Тема сообщения')
-                ->setTextBody('Текст сообщения')
-                ->setHtmlBody('<b>текст сообщения в формате HTML</b>')
-                ->send();
-        var_dump($result);
-        die;
+        $newsList = News::getList();
+        $subscribers = Subscriber::getList();
+        
+        $count = Sender::run($subscribers, $newsList);
+        
+        Console::output("\nEmail sent: {$count}");
     }
-}   
+
+}
