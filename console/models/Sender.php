@@ -32,5 +32,4 @@ class Sender
         }
         return $count;
     }
-
 }

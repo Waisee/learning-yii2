@@ -3,9 +3,10 @@
 namespace console\controllers;
 
 use yii\helpers\Console;
-use console\models\News;
 use console\models\Subscriber;
 use console\models\Sender;
+use console\models\News;
+
 /**
  * Description of newPHPClass
  *
@@ -25,5 +26,4 @@ class MailerController extends \yii\console\Controller
         
         Console::output("\nEmail sent: {$count}");
     }
-
 }
