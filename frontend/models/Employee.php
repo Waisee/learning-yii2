@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 class Employee extends Model
 {
@@ -13,20 +14,20 @@ class Employee extends Model
 
     public $firstName;
     public $lastName;
-    public $middleName = null;
+    public $middleName;
     public $salary;
     public $email;
-    public $birthDate = null;
-    public $startDate;
+    public $birthDate;
+    public $hiringDate;
     public $city;
     public $position;
-    public $id;
+    public $idCode;
 
     public function scenarios()
     {
         return [
             self::SCENARIO_EMPLOYEE_REGISTER => ['firstName', 'lastName', 'middleName',
-                'email', 'birthDate', 'startDate', 'city', 'position', 'id'],
+                'email', 'birthDate', 'hiringDate', 'city', 'position', 'idCode'],
             self::SCENARIO_EMPLOYEE_UPDATE => ['firstName', 'lastName', 'middleName'],
         ];
     }
@@ -34,26 +35,35 @@ class Employee extends Model
     public function rules()
     {
         return [
-            [['firstName', 'lastName', 'email', 'startDate', 'position', 'id'], 'required'],
+            [['firstName', 'lastName', 'email','birthDate', 'hiringDate'], 'required'],
             [['firstName'], 'string', 'min' => 2],
             [['lastName'], 'string', 'min' => 3],
             [['email'], 'email'],
-            [['birthDate', 'startDate'], 'date', 'format' => 'php:Y-m-d'],
+            [['middleName'], 'required', 'on' => self::SCENARIO_EMPLOYEE_UPDATE],
+            [['birthDate', 'hiringDate'], 'date', 'format' => 'php:Y-m-d'],
             [['city'], 'integer'],
             [['position'], 'string'],
-            [['id'], 'string', 'min' => 10],
-            [['middleName'], 'required', 'on' => self::SCENARIO_EMPLOYEE_UPDATE],
+            [['idCode'], 'string', 'length' => 10],
+            [['hiringDate', 'position', 'idCode'], 'required', 'on' => self::SCENARIO_EMPLOYEE_REGISTER],
         ];
     }
     
     public function save()
     {
-        $sql = "INSERT INTO employee (firstname, lastname, middlename, email, birthdate, "
-                . "startdate, city, position, id ) "
-                . "VALUES ('$this->firstName', '{$this->lastName}', '{$this->middleName}', "
-                . "'{$this->email}', '{$this->birthDate}', '{$this->startDate}', "
-                . "{$this->city}, '{$this->position}', '{$this->id}')";
-        return Yii::$app->db->createCommand($sql)->execute();
+        return true;
+//        $sql = "INSERT INTO employee (firstname, lastname, middlename, email, birthdate, "
+//                . "hiringdate, city, position, id ) "
+//                . "VALUES ('$this->firstName', '{$this->lastName}', '{$this->middleName}', "
+//                . "'{$this->email}', '{$this->birthDate}', '{$this->hiringDate}', "
+//                . "{$this->city}, '{$this->position}', '{$this->id}')";
+//        return Yii::$app->db->createCommand($sql)->execute();
+    }
+    
+    public function getCitiesList()
+    {
+        $sql = 'SELECT * FROM city';
+        $result = Yii::$app->db->createCommand($sql)->queryAll();
+        return ArrayHelper::map($result,'id', 'name');
     }
 
 }
